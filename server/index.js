@@ -1,41 +1,32 @@
 import dotenv from 'dotenv'
 import express from 'express'
-import { GameDig } from 'gamedig'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 dotenv.config()
 
 const app = express()
-const host = process.env.VALHEIM_HOST || '127.0.0.1'
-const gamePort = Number(process.env.VALHEIM_PORT || 2456)
+const statusBaseUrl = process.env.STATUS_BASE_URL || 'https://valstatus.ty-davis.com'
+const statusUrl = new URL('/status.json', statusBaseUrl)
 const apiPort = Number(process.env.API_PORT || 3001)
 const distPath = fileURLToPath(new URL('../dist/', import.meta.url))
 
 app.get('/api/status', async (_request, response) => {
-  const target = `${host}:${gamePort}`
-
   try {
-    const server = await GameDig.query({
-      type: 'valheim',
-      host,
-      port: gamePort,
-      socketTimeout: 2500,
-      attemptTimeout: 8000,
-      maxRetries: 0,
-      requestRules: true,
+    const upstream = await fetch(statusUrl, {
+      headers: { accept: 'application/json' },
+      signal: AbortSignal.timeout(8000),
     })
+    if (!upstream.ok) throw new Error(`Status source returned HTTP ${upstream.status}.`)
 
-    response.json({
-      ...server,
-      target,
-      checkedAt: new Date().toISOString(),
-    })
+    const body = await upstream.text()
+    // Keep Steam IDs exact; their JSON integer values exceed JavaScript's safe integer range.
+    const payload = JSON.parse(body.replace(/("steam_id"\s*:\s*)(\d+)/, '$1"$2"'))
+    response.set('Cache-Control', 'no-store')
+    response.json(payload)
   } catch (error) {
     response.status(503).json({
-      error: error instanceof Error ? error.message : 'GameDig could not query this server.',
-      target,
-      checkedAt: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Could not fetch the status source.',
     })
   }
 })

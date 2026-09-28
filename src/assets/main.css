@@ -26,11 +26,6 @@ main {
     linear-gradient(90deg, transparent 49.95%, rgb(255 255 255 / 1.4%) 50%, transparent 50.05%);
 }
 
-.brand-mark { display: flex; width: 30px; height: 30px; align-items: center; justify-content: center; gap: 2px; border: 1px solid rgb(194 157 92 / 45%); background: rgb(194 157 92 / 5%); }
-.brand-mark span { display: block; width: 2px; background: #c6a56b; transform: skew(-23deg); }
-.brand-mark span:nth-child(1) { height: 9px; }
-.brand-mark span:nth-child(2) { height: 16px; }
-.brand-mark span:nth-child(3) { height: 12px; }
 .refresh-button { display: inline-flex; height: 30px; align-items: center; gap: 7px; border: 1px solid rgb(255 255 255 / 12%); background: rgb(255 255 255 / 3%); padding: 0 9px; color: #c9c5b8; transition: border-color 140ms ease, background 140ms ease, color 140ms ease; }
 .refresh-button:hover:not(:disabled) { border-color: rgb(194 157 92 / 55%); background: rgb(194 157 92 / 8%); color: #e6c993; }
 .refresh-button:disabled { cursor: wait; opacity: 0.7; }
@@ -45,20 +40,14 @@ main {
 .status-online .status-dot { box-shadow: 0 0 7px rgb(145 200 157 / 85%); }
 .status-offline { border-color: rgb(208 118 82 / 30%); color: #d99575; }
 .status-loading { border-color: rgb(194 157 92 / 28%); color: #c8aa71; }
-.copy-button { flex: 0 0 auto; border: 1px solid rgb(255 255 255 / 12%); padding: 4px 6px; background: transparent; color: #a9a394; font: 8px 'SFMono-Regular', Consolas, monospace; letter-spacing: 0.1em; }
-.copy-button:hover { border-color: rgb(194 157 92 / 45%); color: #e6c993; }
-
 .metric-card { min-width: 0; border: 1px solid rgb(255 255 255 / 9%); background: rgb(26 28 24 / 82%); padding: 10px 12px 9px; }
 .metric-value { overflow: hidden; margin-top: 6px; color: #eeeae0; font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif; font-size: 1.55rem; line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
 .metric-unit { margin-left: 6px; color: #8c8779; font: 9px 'SFMono-Regular', Consolas, monospace; letter-spacing: 0.1em; }
 .data-panel { overflow: hidden; border: 1px solid rgb(255 255 255 / 9%); background: rgb(23 25 21 / 88%); }
 .panel-heading { display: flex; min-height: 62px; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid rgb(255 255 255 / 8%); padding: 10px 14px; }
-.player-row { display: flex; min-height: 44px; align-items: center; gap: 10px; padding: 5px 14px; }
-.player-index { width: 18px; color: #6c6a5f; font: 9px 'SFMono-Regular', Consolas, monospace; }
-.player-glyph { display: grid; width: 24px; height: 24px; flex: 0 0 auto; place-items: center; border: 1px solid rgb(194 157 92 / 20%); background: rgb(194 157 92 / 7%); color: #d7bd8b; font: 11px Georgia, serif; }
-.empty-roster { display: flex; min-height: 145px; flex-direction: column; align-items: center; justify-content: center; gap: 5px; color: #726f64; font-size: 11px; }
-.empty-rune { color: #8e805e; font: 26px Georgia, serif; }
+.details-grid { display: grid; grid-template-columns: minmax(0, 1fr); }
 .detail-row { display: flex; min-height: 38px; align-items: center; justify-content: space-between; gap: 16px; padding: 6px 14px; }
+.detail-row:not(:last-child) { border-bottom: 1px solid rgb(255 255 255 / 7%); }
 .detail-row dt { flex: 0 0 auto; color: #8c887b; font-size: 11px; }
 .detail-row dd { overflow: hidden; margin: 0; color: #d7d4ca; font: 10px 'SFMono-Regular', Consolas, monospace; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
 .payload-panel { border: 1px solid rgb(255 255 255 / 9%); background: rgb(23 25 21 / 88%); }
@@ -71,4 +60,17 @@ main {
 @media (max-width: 420px) {
   .metric-card { padding-inline: 9px; }
   .metric-value { font-size: 1.3rem; }
+}
+
+@media (min-width: 600px) {
+  .details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .detail-row:nth-child(odd) { border-right: 1px solid rgb(255 255 255 / 7%); }
+  .detail-row:nth-child(odd):last-child { border-right: 0; }
+}
+
+@media (min-width: 900px) {
+  .details-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .detail-row:nth-child(odd) { border-right: 0; }
+  .detail-row:not(:nth-child(4n)) { border-right: 1px solid rgb(255 255 255 / 7%); }
+  .detail-row:nth-child(4n + 3):last-child { border-right: 0; }
 }
