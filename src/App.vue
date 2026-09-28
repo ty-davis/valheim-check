@@ -50,14 +50,16 @@ async function refresh() {
   errorMessage.value = ''
 
   try {
-    const response = await fetch('/api/status')
+    const response = await fetch('/api/valheim/status', { cache: 'no-store' })
     const result = await response.json()
-    if (!response.ok) throw new Error(result.error || 'The status source did not return a response.')
+    if (!response.ok) throw new Error(result.error || `Status endpoint returned HTTP ${response.status}.`)
     snapshot.value = result as StatusDocument
     errorMessage.value = result.error || ''
     state.value = result.error ? 'offline' : 'online'
   } catch (error) {
-    errorMessage.value = error instanceof Error ? error.message : 'Could not reach the status service.'
+    errorMessage.value = error instanceof TypeError
+      ? 'Could not reach the status function.'
+      : error instanceof Error ? error.message : 'Could not reach the status service.'
     state.value = 'offline'
   }
 }
@@ -113,7 +115,7 @@ onUnmounted(() => {
             <span>{{ snapshot ? platformLabel(snapshot.platform) : 'PLATFORM UNKNOWN' }}</span>
           </p>
           <p v-if="state === 'offline'" class="mt-3 max-w-xl text-xs leading-relaxed text-orange-200/80">
-            {{ errorMessage }}<span v-if="!snapshot"> Check <code>STATUS_BASE_URL</code> in <code>.env</code>.</span>
+            {{ errorMessage }}<span v-if="!snapshot"> Check the Pages Function and Cloudflare Tunnel configuration.</span>
           </p>
         </div>
 
